@@ -8,61 +8,32 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import ARKit
 
-class GameViewController: UIViewController {
 
+class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate {
+    
+    var gameController:GameController!
+    
+    var gameView:ARSCNView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // create and add a camera to the scene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
-        
-        // create and add a light to the scene
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light!.type = .omni
-        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        scene.rootNode.addChildNode(lightNode)
-        
-        // create and add an ambient light to the scene
-        let ambientLightNode = SCNNode()
-        ambientLightNode.light = SCNLight()
-        ambientLightNode.light!.type = .ambient
-        ambientLightNode.light!.color = UIColor.darkGray
-        scene.rootNode.addChildNode(ambientLightNode)
-        
-        // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-        
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
         // retrieve the SCNView
-        let scnView = self.view as! SCNView
+        gameView = self.view as! ARSCNView
         
-        // set the scene to the view
-        scnView.scene = scene
+        gameController = GameController(scnView: gameView)
+
+        // Configure the view
+        gameView.backgroundColor = UIColor.black
         
-        // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
+        // Set the view's delegate
+        gameView.delegate = self
         
-        // show statistics such as fps and timing information
-        scnView.showsStatistics = true
-        
-        // configure the view
-        scnView.backgroundColor = UIColor.black
-        
-        // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
+        // Show statistics such as fps and timing information
+        gameView.showsStatistics = true
     }
     
     @objc
@@ -115,6 +86,100 @@ class GameViewController: UIViewController {
         } else {
             return .all
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setupARSession()
+    }
+    
+    var arSession:ARSession? {
+        get {
+//            return nil
+            return gameView.session
+        }
+    }
+    
+    func setupARSession() {
+        // Create a session configuration
+        let configuration = ARWorldTrackingConfiguration()
+        
+        configuration.planeDetection = .horizontal
+
+        // Run the view's session
+        arSession?.run(configuration)
+        
+        arSession?.delegate = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // Pause the view's session
+        arSession?.pause()
+    }
+    
+    /**
+     Implement this to provide a custom node for the given anchor.
+     
+     @discussion This node will automatically be added to the scene graph.
+     If this method is not implemented, a node will be automatically created.
+     If nil is returned the anchor will be ignored.
+     @param renderer The renderer that will render the scene.
+     @param anchor The added anchor.
+     @return Node that will be mapped to the anchor or nil.
+     */
+//    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+//        
+//    }
+
+    
+    /**
+     Called when a new node has been mapped to the given anchor.
+     
+     @param renderer The renderer that will render the scene.
+     @param node The node that maps to the anchor.
+     @param anchor The added anchor.
+     */
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        
+    }
+
+    
+    /**
+     Called when a node will be updated with data from the given anchor.
+     
+     @param renderer The renderer that will render the scene.
+     @param node The node that will be updated.
+     @param anchor The anchor that was updated.
+     */
+    func renderer(_ renderer: SCNSceneRenderer, willUpdate node: SCNNode, for anchor: ARAnchor) {
+        
+    }
+
+    
+    /**
+     Called when a node has been updated with data from the given anchor.
+     
+     @param renderer The renderer that will render the scene.
+     @param node The node that was updated.
+     @param anchor The anchor that was updated.
+     */
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        
+    }
+
+    
+    /**
+     Called when a mapped node has been removed from the scene graph for the given anchor.
+     
+     @param renderer The renderer that will render the scene.
+     @param node The node that was removed.
+     @param anchor The anchor that was removed.
+     */
+    func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
+        
     }
 
 }
