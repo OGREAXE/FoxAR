@@ -983,7 +983,7 @@ class GameController: NSObject, ExtraProtocols {
     
     // MARK: - Update
 
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+    public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // compute delta time
         if lastUpdateTime == 0 {
             lastUpdateTime = time

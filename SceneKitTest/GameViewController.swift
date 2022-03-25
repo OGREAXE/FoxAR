@@ -30,7 +30,7 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
         gameView.backgroundColor = UIColor.black
         
         // Set the view's delegate
-//        gameView.delegate = self
+        gameView.delegate = self
         
         // Show statistics such as fps and timing information
         gameView.showsStatistics = true
@@ -195,4 +195,8 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
         
     }
 
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        gameController.renderer(gameView, updateAtTime: time)
+    }
 }
