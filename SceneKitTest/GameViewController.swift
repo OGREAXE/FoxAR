@@ -30,7 +30,7 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
         gameView.backgroundColor = UIColor.black
         
         // Set the view's delegate
-        gameView.delegate = self
+//        gameView.delegate = self
         
         // Show statistics such as fps and timing information
         gameView.showsStatistics = true
@@ -155,7 +155,7 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
             
             print("renderer didAdd node at \(position)")
             
-            gameView.scene.rootNode.position = position
+//            gameView.scene.rootNode.position = position
         }
     }
 

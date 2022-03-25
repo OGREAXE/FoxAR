@@ -125,7 +125,8 @@ class GameController: NSObject, ExtraProtocols {
 
         // keep a pointer to the physicsWorld from the character because we will need it when updating the character's position
         character!.physicsWorld = scene!.physicsWorld
-        scene!.rootNode.addChildNode(character!.node!)
+//        scene!.rootNode.addChildNode(character!.node!)
+        basicNode.addChildNode(character!.node!)
     }
 
     func setupPhysics() {
@@ -512,6 +513,9 @@ class GameController: NSObject, ExtraProtocols {
 
         //load the main scene
         self.scene = SCNScene(named: "Art.scnassets/scene.scn")
+        
+        self.scene = SCNScene()
+        setupBasicNode()
 
         //setup physics
         setupPhysics()
@@ -523,16 +527,16 @@ class GameController: NSObject, ExtraProtocols {
         setupCharacter()
 
         //setup enemies
-//        setupEnemies()
+        setupEnemies()
 
         //setup friends
-//        addFriends(3)
+        addFriends(3)
 
         //setup platforms
-//        setupPlatforms()
+        setupPlatforms()
 
         //setup particles
-//        setupParticleSystem()
+        setupParticleSystem()
 
         //setup lighting
         let light = scene!.rootNode.childNode(withName: "DirectLight", recursively: true)!.light
@@ -545,22 +549,49 @@ class GameController: NSObject, ExtraProtocols {
 //        setupCamera()
 
         //setup game controller
-//        setupGameController()
+        setupGameController()
 
         //configure quality
-//        configureRenderingQuality(scnView)
+        configureRenderingQuality(scnView)
 
         //assign the scene to the view
         sceneRenderer!.scene = self.scene
 
         //setup audio
-//        setupAudio()
+        setupAudio()
 
         //select the point of view to use
 //        sceneRenderer!.pointOfView = self.cameraNode
 
         //register ourself as the physics contact delegate to receive contact notifications
-//        sceneRenderer!.scene!.physicsWorld.contactDelegate = self
+        sceneRenderer!.scene!.physicsWorld.contactDelegate = self
+    }
+    
+    var basicNode = SCNNode()
+    
+    func setupBasicNode() {
+        let mainScene = SCNScene(named: "Art.scnassets/scene.scn")!
+    
+        //for a AR app we don't need skybox
+        let reAddedNodes = ["door", "lava", "depart", "field", "grass072", "Object001", "Object002", "Object003", "Object004"]
+    
+        let addAll = true
+        
+        for child in mainScene.rootNode.childNodes {
+            let shouldExclude = (child.name?.starts(with: "trigCam") ?? false )
+            || (child.name?.starts(with: "Camera") ?? false)
+            || (child.name?.starts(with: "camera") ?? false)
+            || (child.name?.starts(with: "skybox") ?? false)
+    
+            if !shouldExclude || addAll {
+                basicNode.addChildNode(child)
+            }
+        }
+    
+        scene?.rootNode.addChildNode(basicNode)
+    
+        let scale:Double = 1
+        basicNode.scale = SCNVector3(scale, scale, scale)
     }
 
     func resetPlayerPosition() {
@@ -974,9 +1005,9 @@ class GameController: NSObject, ExtraProtocols {
         character!.update(atTime: time, with: renderer)
 
         // update enemies
-//        for entity: GKEntity in gkScene!.entities {
-//            entity.update(deltaTime: deltaTime)
-//        }
+        for entity: GKEntity in gkScene!.entities {
+            entity.update(deltaTime: deltaTime)
+        }
     }
 
     // MARK: - contact delegate
