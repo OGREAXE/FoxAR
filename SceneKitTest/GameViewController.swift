@@ -131,7 +131,7 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
      @return Node that will be mapped to the anchor or nil.
      */
 //    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-//        
+//
 //    }
 
     
@@ -142,8 +142,21 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
      @param node The node that maps to the anchor.
      @param anchor The added anchor.
      */
+    
+    var hasInitedPostion = false
+    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        
+        if !hasInitedPostion && node != gameView.scene.rootNode {
+            hasInitedPostion = true
+            
+            guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+            
+            let  position = SCNVector3Make(planeAnchor.center.x, planeAnchor.center.y, planeAnchor.center.z)
+            
+            print("renderer didAdd node at \(position)")
+            
+            gameView.scene.rootNode.position = position
+        }
     }
 
     
