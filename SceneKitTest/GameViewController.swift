@@ -34,6 +34,8 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
         
         // Show statistics such as fps and timing information
         gameView.showsStatistics = true
+        
+        gameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(self.didTap(_:))))
     }
     
     @objc
@@ -198,5 +200,30 @@ class GameViewController: UIViewController, ARSessionDelegate, ARSCNViewDelegate
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         gameController.renderer(gameView, updateAtTime: time)
+    }
+    
+    @objc func didTap(_ tap:UITapGestureRecognizer) {
+        let point = tap.location(in: gameView)
+        let results = gameView.hitTest(point, options: nil)
+        
+        if results.count > 0 {
+            for aResult in results {
+                print("get hit result \(aResult)")
+            }
+            
+            let targetCoord = results[0].worldCoordinates
+            
+            print("target corrdinate \(targetCoord)")
+            
+//            let charWorldPos = (character?.node?.worldPosition) ?? SCNVector3(0, 0, 0)
+//
+//            let dirx = result.worldCoordinates.x - charWorldPos.x
+//            let diry = result.worldCoordinates.y - charWorldPos.y
+            
+            
+        } else {
+            print("didn't hit anything")
+        }
+        
     }
 }

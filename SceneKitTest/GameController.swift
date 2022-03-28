@@ -127,6 +127,8 @@ class GameController: NSObject, ExtraProtocols {
         character!.physicsWorld = scene!.physicsWorld
 //        scene!.rootNode.addChildNode(character!.node!)
         basicNode.addChildNode(character!.node!)
+        
+        character?.node.position = SCNVector3(x: 0, y: 10, z: 0)
     }
 
     func setupPhysics() {
@@ -539,11 +541,11 @@ class GameController: NSObject, ExtraProtocols {
         setupParticleSystem()
 
         //setup lighting
-        let light = scene!.rootNode.childNode(withName: "DirectLight", recursively: true)!.light
-        light!.shadowCascadeCount = 3  // turn on cascade shadows
-        light!.shadowMapSize = CGSize(width: CGFloat(512), height: CGFloat(512))
-        light!.maximumShadowDistance = 20
-        light!.shadowCascadeSplittingFactor = 0.5
+//        let light = scene!.rootNode.childNode(withName: "DirectLight", recursively: true)!.light
+//        light!.shadowCascadeCount = 3  // turn on cascade shadows
+//        light!.shadowMapSize = CGSize(width: CGFloat(512), height: CGFloat(512))
+//        light!.maximumShadowDistance = 20
+//        light!.shadowCascadeSplittingFactor = 0.5
         
         //setup camera
 //        setupCamera()
@@ -565,6 +567,9 @@ class GameController: NSObject, ExtraProtocols {
 
         //register ourself as the physics contact delegate to receive contact notifications
         sceneRenderer!.scene!.physicsWorld.contactDelegate = self
+        
+        let scale:Double = 0.1 //0.05
+        basicNode.scale = SCNVector3(scale, scale, scale)
     }
     
     var basicNode = SCNNode()
@@ -573,25 +578,46 @@ class GameController: NSObject, ExtraProtocols {
         let mainScene = SCNScene(named: "Art.scnassets/scene.scn")!
     
         //for a AR app we don't need skybox
-        let reAddedNodes = ["door", "lava", "depart", "field", "grass072", "Object001", "Object002", "Object003", "Object004"]
+        let reAddedNodes = ["door", "lava", "depart", "field", "grass072", "Object001", "Object002", "Object003", "Object004", "enemy"]
     
-        let addAll = true
+        let addAll = false
         
-        for child in mainScene.rootNode.childNodes {
+        let leveSceneNode = mainScene.rootNode.childNode(withName: "level_scene reference", recursively: false)!
+        
+        let newLevelSceneNode = SCNNode()
+        
+        for child in leveSceneNode.childNodes {
             let shouldExclude = (child.name?.starts(with: "trigCam") ?? false )
             || (child.name?.starts(with: "Camera") ?? false)
             || (child.name?.starts(with: "camera") ?? false)
             || (child.name?.starts(with: "skybox") ?? false)
     
             if !shouldExclude || addAll {
+                newLevelSceneNode.addChildNode(child)
+            }
+            
+//            for toAddName in reAddedNodes {
+//                if child.name!.starts(with: toAddName) {
+//                    newLevelSceneNode.addChildNode(child)
+//                    break
+//                }
+//            }
+            
+        }
+        
+        basicNode.addChildNode(newLevelSceneNode)
+        
+        for child in mainScene.rootNode.childNodes {
+            //add other (enemies)
+            if child != leveSceneNode {
                 basicNode.addChildNode(child)
             }
         }
     
         scene?.rootNode.addChildNode(basicNode)
     
-        let scale:Double = 1
-        basicNode.scale = SCNVector3(scale, scale, scale)
+//        let scale:Double = 0.05
+//        basicNode.scale = SCNVector3(scale, scale, scale)
     }
 
     func resetPlayerPosition() {
