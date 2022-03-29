@@ -27,8 +27,8 @@ class Character: NSObject {
     static private let jumpImpulse = Float(0.1)
     static private let minAltitude = Float(-10)
     static private let enableFootStepSound = true
-    static private let collisionMargin = Float(0.04)
-    static private let modelOffset = float3(0, -collisionMargin, 0)
+    static private let collisionMargin = Float(0.04) * Float(GameController.globalScale)
+    static private let modelOffset = float3(0, Float(-collisionMargin), 0)
     static private let collisionMeshBitMask = 8
     
     enum GroundType: Int {
@@ -424,6 +424,7 @@ class Character: NSObject {
                    downwardAcceleration = 0
                 }
                 groundNode = hit.node
+                let groundNodeScale = groundNode?.scale
                 touchesTheGround = true
                 
                 //touching lava?

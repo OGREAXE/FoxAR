@@ -102,6 +102,8 @@ class GameController: NSObject, ExtraProtocols {
 
     // update delta time
     private var lastUpdateTime = TimeInterval()
+    
+    static let globalScale = 0.1
 
 // MARK: -
 // MARK: Setup
@@ -143,7 +145,8 @@ class GameController: NSObject, ExtraProtocols {
         let collisionsScene = SCNScene( named: "Art.scnassets/collision.scn" )
         collisionsScene!.rootNode.enumerateChildNodes { (_ child: SCNNode, _ _: UnsafeMutablePointer<ObjCBool>) in
             child.opacity = 0.0
-            self.scene?.rootNode.addChildNode(child)
+//            self.scene?.rootNode.addChildNode(child)
+            basicNode.addChildNode(child)
         }
     }
 
@@ -541,11 +544,11 @@ class GameController: NSObject, ExtraProtocols {
         setupParticleSystem()
 
         //setup lighting
-//        let light = scene!.rootNode.childNode(withName: "DirectLight", recursively: true)!.light
-//        light!.shadowCascadeCount = 3  // turn on cascade shadows
-//        light!.shadowMapSize = CGSize(width: CGFloat(512), height: CGFloat(512))
-//        light!.maximumShadowDistance = 20
-//        light!.shadowCascadeSplittingFactor = 0.5
+        let light = scene!.rootNode.childNode(withName: "DirectLight", recursively: true)!.light
+        light!.shadowCascadeCount = 3  // turn on cascade shadows
+        light!.shadowMapSize = CGSize(width: CGFloat(512), height: CGFloat(512))
+        light!.maximumShadowDistance = 20
+        light!.shadowCascadeSplittingFactor = 0.5
         
         //setup camera
 //        setupCamera()
@@ -568,7 +571,7 @@ class GameController: NSObject, ExtraProtocols {
         //register ourself as the physics contact delegate to receive contact notifications
         sceneRenderer!.scene!.physicsWorld.contactDelegate = self
         
-        let scale:Double = 0.1 //0.05
+        let scale:Double = GameController.globalScale //0.05
         basicNode.scale = SCNVector3(scale, scale, scale)
     }
     
