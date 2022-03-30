@@ -137,8 +137,8 @@ class Character: NSObject {
 
         // Setup collision shape
         let (min, max) = model.boundingBox
-        let collisionCapsuleRadius = CGFloat(max.x - min.x) * CGFloat(0.4)
-        let collisionCapsuleHeight = CGFloat(max.y - min.y)
+        let collisionCapsuleRadius = CGFloat(max.x - min.x) * CGFloat(0.4) * CGFloat(GameController.globalScale)
+        let collisionCapsuleHeight = CGFloat(max.y - min.y) * CGFloat(GameController.globalScale)
 
         let collisionGeometry = SCNCapsule(capRadius: collisionCapsuleRadius, height: collisionCapsuleHeight)
         characterCollisionShape = SCNPhysicsShape(geometry: collisionGeometry, options:[.collisionMargin: Character.collisionMargin])
@@ -424,7 +424,6 @@ class Character: NSObject {
                    downwardAcceleration = 0
                 }
                 groundNode = hit.node
-                let groundNodeScale = groundNode?.scale
                 touchesTheGround = true
                 
                 //touching lava?
@@ -503,7 +502,12 @@ class Character: NSObject {
         
         characterVelocity.y += downwardAcceleration
         if simd_length_squared(characterVelocity) > 10E-4 * 10E-4 {
-            let startPosition = characterNode!.presentation.simdWorldPosition + collisionShapeOffsetFromModel
+            let startPosition = (characterNode!.presentation.simdWorldPosition + collisionShapeOffsetFromModel ) / Float(GameController.globalScale)
+            
+            let wPos = characterNode!.presentation.simdWorldPosition
+            let lPos = characterNode!.presentation.simdPosition
+            
+            
             slideInWorld(fromPosition: startPosition, velocity: characterVelocity)
         }
     }
@@ -649,7 +653,7 @@ class Character: NSObject {
                 stop = true
             }
         }
-        characterNode!.simdWorldPosition = replacementPoint - collisionShapeOffsetFromModel
+        characterNode!.simdWorldPosition = replacementPoint * Float(GameController.globalScale) - collisionShapeOffsetFromModel
     }
 
     private func handleSlidingAtContact(_ closestContact: SCNPhysicsContact, position start: float3, velocity: float3)
