@@ -56,6 +56,11 @@ class GameController: NSObject, ExtraProtocols {
     // Overlays
     private var overlay: Overlay?
 
+    var mainCharacter: Character? {
+        get {
+            return character
+        }
+    }
     // Character
     private var character: Character?
 
